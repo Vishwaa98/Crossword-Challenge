@@ -10,8 +10,7 @@ import android.widget.GridView;
 public class MainActivity extends AppCompatActivity {
 
     GridView gridView;
-    boolean[][] selectedChars;
-    String selectedWord = "";
+    GridView wordsGridView;
     int totalCols;
     int colSize;
     int rowSize;
@@ -21,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
     int topPadding;
     char[][] chars;
     int[] firstIndex = {-1, -1};
-    boolean[][] foundChars;
+    boolean[][] selectedChars;
+    String selectedWord = "";
     Direction direction = null;
-    GridView wordsGridView;
     public final int WIDTH = 10;
     public final int HEIGHT = 10;
 
@@ -43,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         wordsGridView.setAdapter(wordsAdapter);
 
         selectedChars = new boolean[WIDTH][HEIGHT];
-        foundChars = new boolean[WIDTH][HEIGHT];
         chars = grid.getGrid();
 
         gridView.setOnTouchListener(new View.OnTouchListener() {
@@ -57,20 +55,11 @@ public class MainActivity extends AppCompatActivity {
                 leftPadding = gridView.getPaddingLeft();
                 topPadding = gridView.getPaddingTop();
 
-                /*System.out.println("Vishwaa  height " + gridView.getLayoutParams().height);
-                System.out.println("Vishwaa cols " + totalCols);
-                System.out.println("Vishwaa colSize " + colSize);
-                System.out.println("Vishwaa horizontal spacing " + gridView.getHorizontalSpacing());
-                System.out.println("Vishwaa vertical spacing " + gridView.getVerticalSpacing());
-                System.out.println("Vishwaa  rowsize " + rowSize);*/
-
                 int actionMasked = event.getActionMasked();
                 int[] cellIndex = getGridIndex(event);
                 if (cellIndex[0] == -1 || cellIndex[1] == -1){
                     return true;
                 }
-                //gridView.getChildAt(convertArrayToListIndex(cellIndex)).setBackgroundColor(Color.parseColor("#18A608"));
-                System.out.println(chars[cellIndex[0]][cellIndex[1]]);
 
                 switch(actionMasked){
                     case MotionEvent.ACTION_DOWN:
@@ -81,10 +70,9 @@ public class MainActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         firstIndex = new int[] {-1, -1};
                         direction = null;
-                        System.out.println("Vishwaa selected word    " + selectedWord);
                         if (Words.checkIfValidWord(selectedWord)){
                             Words.addWordToFoundList(selectedWord);
-                            setFoundChars();
+                            Words.setFoundChars(selectedChars);
                             wordsAdapter.notifyDataSetChanged();
                         } else {
                             removeHighlightedCells();
@@ -96,16 +84,13 @@ public class MainActivity extends AppCompatActivity {
                         if (!selectedChars[cellIndex[0]][cellIndex[1]] && firstIndex != cellIndex) {
 
                             if (direction == null) {
-                                System.out.println("Vishwaa set direction  " + chars[cellIndex[0]][cellIndex[1]]);
                                 setDirection(firstIndex, cellIndex);
                                 addCharToList(cellIndex);
                             } else {
-                                //System.out.println("VISHWAA DIRECTION   " + direction);
                                 if (direction == getDirection(firstIndex, cellIndex)) {
                                     addCharToList(cellIndex);
                                 } else {
                                     removeHighlightedCells();
-                                    System.out.println("Vishwaa wrong direction");
                                 }
                             }
                             firstIndex = cellIndex;
@@ -122,21 +107,10 @@ public class MainActivity extends AppCompatActivity {
             for (int j=0; j<selectedChars[0].length; j++){
                 if (selectedChars[i][j]){
                     selectedChars[i][j] = false;
-                    if (!foundChars[i][j]){
+                    if (!Words.foundChars[i][j]){
                         gridView.getChildAt(i*totalCols+j).setBackgroundResource(0);
                     }
 
-                }
-            }
-        }
-    }
-
-    public void setFoundChars(){
-        for (int i=0; i<foundChars.length; i++){
-            for (int j=0; j<foundChars[0].length; j++){
-                if (selectedChars[i][j]){
-                    selectedChars[i][j] = false;
-                    foundChars[i][j] = true;
                 }
             }
         }

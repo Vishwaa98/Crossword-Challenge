@@ -68,11 +68,6 @@ public class Grid {
     public void placeWord(String word, Possibility possibility){
         int col = possibility.getCol();
         int row = possibility.getRow();
-        /*System.out.println("Col  Vishwaa: " + col);
-        System.out.println("Row  Vishwaa: " + row);
-        System.out.println("direction  Vishwaa: " + possibility.direction);
-        System.out.println("direction2  Vishwaa: " + possibility.getDirection());
-        System.out.println("word len  Vishwaa: " + word.length());*/
 
         switch(possibility.getDirection()){
             case LEFT:
